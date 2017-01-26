@@ -1,17 +1,10 @@
 const path = require('path')
 const express = require('express')
-const exphbs = require('express-handlebars')
+const pug = require('pug')
 const rp = require('request-promise')
 
 const app = express()
 
-app.engine('.hbs', exphbs({
-  defaultLayout: 'main',
-  extname: '.hbs',
-  layoutsDir: path.join(__dirname, 'views/layouts')
-}))
-app.set('view engine', '.hbs')
-app.set('views', path.join(__dirname, 'views'))
 
 app.get('/:city', (req, res) => {
   rp({
@@ -25,18 +18,13 @@ app.get('/:city', (req, res) => {
   })
     .then((data) => {
       console.log(data)
-      res.render('index', undefined)
+      html = pug.renderFile('./views/index.pug', data)
+      res.end(html)
     })
     .catch((err) => {
       console.log(err)
-      res.render('error')
     })
 })
 
-app.get('/', (req, res) => {
-  res.render('home', {
-    name:'name',
-  })
-})
 
 app.listen(3000)  
